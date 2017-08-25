@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\PhoneNumber;
 use Illuminate\Support\Facades\App;
-use Prophecy\Exception\Doubler\ClassNotFoundException;
-use Symfony\Component\Debug\Exception\FatalErrorException;
+use Mockery\CountValidator\Exception;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class SmsController extends Controller
 {
@@ -25,39 +25,31 @@ class SmsController extends Controller
     public function sendSms(Request $request)
     {
         try {
-            try
-            {
-                $fromModel = PhoneNumber::findOrFail($request->input('from'));
+            $validator = $this->validateSms($request);
+            if($validator->fails()) {
+                return response()->json(['message'=> '', 'error'=> $validator->errors()]);
             }
-            catch(ModelNotFoundException $e)
-            {
+
+            if(!$fromModel = PhoneNumber::where('number' , $request->input('from'))->first())
                 return response()->json(['message'=> '', 'error'=> 'from is not found']);
-            }
 
-            try
-            {
-                $toModel = PhoneNumber::findOrFail($request->input('to'));
-            }
-            catch(ModelNotFoundException $e)
-            {
+            if(!$toModel = PhoneNumber::where('number' , $request->input('to'))->first())
                 return response()->json(['message'=> '', 'error'=> 'to is not found']);
-            }
 
-            $this->validateSms($_REQUEST);
         }
-        catch(FatalErrorException $e)
+        catch(Exception $e)
         {
             return response()->json(['message'=> $e->getMessage(), 'error'=> 'something went wrong']);
         }
 
 
-        return response()->json(['message'=> 'inbound sms ok', 'error'=> '']);
+        return response()->json(['message'=> 'outbound sms ok', 'error'=> '']);
     }
 
     //
 
     private function validateSms(Request $request) {
-        $this->validate($request, [
+        $validator = \Validator::make($request->all(), [
             'from' => 'required|min:6|max:16',
             'from' => 'required|min:6|max:16',
             'text' => 'required|min:1|max:6'
@@ -72,5 +64,7 @@ class SmsController extends Controller
             'text.min' => "text is invalid",
             'text.max' => "text is invalid"
         ]);
+
+        return $validator;
     }
 }
