@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\PhoneNumber;
@@ -68,15 +67,18 @@ class SmsController extends Controller
             $from = $request->input('from');
             $to = $request->input('to');
 
+            //check if from number belongs to the same account as the authenticated one
             if(!$toModel = PhoneNumber::where('number' , $request->input('from'))
                 ->where('account_id', \Auth::user()->__get('id'))
                 ->first())
                 return response()->json(['message'=> '', 'error'=> 'from parameter is not found']);
 
+            //check if from and to are blocked
             $blocked_numbers = Cache::get('block_numbers');
-            if($blocked_numbers[$from . '_' . $to])
+            if(isset($blocked_numbers[$from . '_' . $to]) && $blocked_numbers[$from . '_' . $to])
                 return response()->json(['message' => '', 'error' => 'sms from ' . $from . ' to ' . $to . ' blocked by STOP request.']);
 
+            //check if the number of requests count has crossed 50
             $from_requests_count = Cache::get('from_requests_count_' . $from);
             if(!isset($from_requests_count)){
                 $from_requests_count = 50;

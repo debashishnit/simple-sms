@@ -18,12 +18,16 @@ class SampleSMSTest extends TestCase
         ];
 
         $data = [
-            'from' => '45509198',
-            'to' => '123456',
+            'from' => '4924195509012',
+            'to' => '4924195509193',
             'text' => "Hi!"
         ];
 
+        /*$this->post('/inbound/sms' , $data, $serverHEader)
+            ->seeJsonEquals(['error' => '' , 'message' => 'inbound sms ok']);*/
+
         $this->post('/outbound/sms' , $data, $serverHEader)
-            ->seeJsonEquals(['error' => '' , 'message' => 'inbound sms ok']);
+            ->seeJsonEquals(['error' => '' , 'message' => 'from count ' . Cache::get('from_requests_count_' . $data['from'])]);
+
     }
 }
