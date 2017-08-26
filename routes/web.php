@@ -12,4 +12,6 @@
 */
 
 
+$app->post('/inbound/sms', ['middleware' => 'auth', 'uses' => 'SmsController@receiveSms']);
+
 $app->post('/outbound/sms', ['middleware' => 'auth', 'uses' => 'SmsController@sendSms']);
