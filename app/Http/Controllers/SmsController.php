@@ -35,7 +35,9 @@ class SmsController extends Controller
             if(!$fromModel = PhoneNumber::where('number' , $request->input('from'))->first())
                 return response()->json(['message'=> '', 'error'=> 'from is not found']);
 
-            if(!$toModel = PhoneNumber::where('number' , $request->input('to'))->first())
+            if(!$toModel = PhoneNumber::where('number' , $request->input('to'))
+                                        ->where('account_id', \Auth::user()->__get('id'))
+                                        ->first())
                 return response()->json(['message'=> '', 'error'=> 'to is not found']);
 
             if(trim($request->input('text')) == 'STOP'){

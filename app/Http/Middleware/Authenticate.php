@@ -35,7 +35,7 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if($request->isMethod() != 'post') {
+        if(!$request->isMethod('post')) {
             return response('Bad request', 405);
         }
 

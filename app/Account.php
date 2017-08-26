@@ -12,6 +12,7 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
 {
     use Authenticatable, Authorizable;
 
+    protected $table = "account";
     /**
      * The attributes that are mass assignable.
      *
