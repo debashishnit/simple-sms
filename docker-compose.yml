@@ -36,5 +36,13 @@ services:
     ports:
         - "33061:3306"
 
+  #Cache
+  memcached:
+    image: memcached
+    ports:
+        - "11211:11211"
+    mem_limit: 1g
+    command: memcached -m 1024m
+
 volumes:
   dbdata:

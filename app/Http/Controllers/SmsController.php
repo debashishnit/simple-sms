@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\PhoneNumber;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Mockery\CountValidator\Exception;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 
@@ -25,6 +26,7 @@ class SmsController extends Controller
     public function sendSms(Request $request)
     {
         try {
+
             $validator = $this->validateSms($request);
             if($validator->fails()) {
                 return response()->json(['message'=> '', 'error'=> $validator->errors()]);
@@ -36,6 +38,9 @@ class SmsController extends Controller
             if(!$toModel = PhoneNumber::where('number' , $request->input('to'))->first())
                 return response()->json(['message'=> '', 'error'=> 'to is not found']);
 
+            if(trim($request->input('text')) == 'STOP'){
+                Cache::put('block_numbers', ['from' => $request->input('from'), 'to' => $request->input('to')], 4*60);
+            }
         }
         catch(Exception $e)
         {

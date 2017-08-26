@@ -27,6 +27,7 @@ $app->withFacades();
 
 $app->withEloquent();
 
+$app->configure('cache');
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
