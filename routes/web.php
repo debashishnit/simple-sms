@@ -11,6 +11,9 @@
 |
 */
 
+$app->get('/', function () use ($app) {
+    return $app->version();
+});
 
 $app->post('/inbound/sms', ['middleware' => 'auth', 'uses' => 'SmsController@receiveSms']);
 
