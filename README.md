@@ -55,6 +55,8 @@ docker-compose down
 
 This application expects that you have docker installed and configured in your system.
 
+Also , a MySql client will help in debugging the database setup issues/queries.
+
 ```
 Give examples
 ```
