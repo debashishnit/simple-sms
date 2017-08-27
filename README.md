@@ -45,6 +45,12 @@ docker-compose up -d
 
 6. Open a web browser and hit localhost:9002 , you should be able to see the Lumen version.
 
+7. The docker container can be stopped anytime using
+
+```
+docker-compose down
+```
+
 ### Prerequisites
 
 This application expects that you have docker installed and configured in your system.
